@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Vision as a Dialect: Unifying Visual Understanding and Generation via Text-Aligned Representations</title>
+
+  <link rel="icon" type="image/x-icon" href="static/images/logo_ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Fira+Code&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="stylesheet" href="static/css/photoswipe.css">
+  <link rel="stylesheet" href="static/css/photoswipe-dynamic-caption-plugin.min.css" />
+
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/index.js"></script>
+
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+</head>
+
+
+<style>
+  .pswp-gallery {
+    margin: 15px auto;
+    width: 80%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+  }
+
+  .pswp-gallery img {
+    transition: transform 0.3s ease;
+  }
+
+  .pswp-gallery a:hover img {
+    transform: scale(1.05);
+  }
+
+  .pswp-gallery__item {
+    overflow: hidden;
+  }
+
+  .pswp-gallery__item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .button-shadow {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .button-shadow:hover {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1f1f1f;
+    background-color: #ffffff;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+
+  .section {
+    padding-top: 0rem;
+    padding-bottom: 0.5rem;
+  }
+
+  table {
+    font-size: 0.95em;
+  }
+
+  code,
+  pre {
+    font-family: 'Fira Code', monospace;
+    background-color: #f9f9f9;
+    color: #1a1a1a;
+    font-size: 0.88em;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+  }
+
+  pre {
+    padding: 1em;
+    overflow-x: auto;
+  }
+
+  .pswp-caption-content {
+    font-style: italic;
+    font-size: 0.9em;
+    color: #555;
+    padding-top: 0.5em;
+  }
+
+  .tabs a {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+
+  .highlight pre {
+    background: #f5f5f5 !important;
+    border: 1px solid #e0e0e0;
+  }
+
+  #und-table td:first-child,
+  #gen-table td:first-child {
+    text-align: left !important;
+  }
+</style>
+
+
+<body>
+  <section class="hero">
+    <div class="columns is-centered">
+      <div class="column has-text-centered">
+        <h1 class="title is-3 publication-title">Unifying Visual Understanding and Generation
+          via Text-Aligned Representations</h1>
+        <div class="is-size-5 publication-authors">
+          <!-- Paper authors -->
+          <a href="https://csuhan.com" target="_blank">Jiaming Han</a><sup>1,2</sup>,
+          <a href="https://haochen-rye.github.io" target="_blank">Hao Chen</a><sup>2,†</sup>,
+          <a href="https://scholar.google.com/citations?user=uPmTOHAAAAAJ&hl=zh-CN" target="_blank">Yang
+            Zhao</a><sup>2</sup>,
+          <a href="https://hywang66.github.io" target="_blank">Hanyu Wang</a><sup>2</sup>,
+          <a href="https://kevinz8866.github.io" target="_blank">Qi Zhao</a><sup>2</sup>,
+          <br>
+          <a href='https://ziyanyang.github.io' target='_blank'>Ziyan Yang</a><sup>2</sup>,
+          <a href="https://hehao13.github.io" target="_blank">Hao He</a><sup>1,2</sup>,
+          <a href="https://xyue.io" target="_blank">Xiangyu Yue</a><sup>1,‡</sup>,
+          <a href="https://www.lujiang.info" target="_blank">Lu Jiang</a><sup>2,‡</sup>
+        </div>
+        <div class="is-size-5 publication-authors">
+          <sup>1</sup>
+          <a href='http://mmlab.ie.cuhk.edu.hk/' target='_blank'>CUHK MMLab</a>&emsp;
+          <sup>2</sup> <a href='https://seed.bytedance.com/en' target='_blank'>ByteDance Seed
+          </a>
+        </div>
+        <div class="is-size-6">
+          <sup>†</sup>Project lead&nbsp;&nbsp;&nbsp;<sup>‡</sup>Corresponding authors
+          </a>
+        </div>
+
+        <div class="column has-text-centered">
+          <div class="publication-links">
+            <span class="link-block">
+              <a href="https://arxiv.org/abs/xxxx.xxxxx" target="_blank"
+                class="external-link button is-normal is-rounded button-shadow button-shadow">
+                <span class="icon">
+                  <img src="static/images/arxiv-logomark-small.svg" style="height: 1em;" alt="arXiv" />
+                </span>
+                <span>Paper</span>
+              </a>
+            </span>
+
+            <!-- Github link -->
+            <span class="link-block">
+              <a href="https://github.com/csuhan/Tar" target="_blank"
+                class="external-link button is-normal is-rounded button-shadow">
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>Code</span>
+              </a>
+            </span>
+
+            <span class="link-block">
+              <a href="https://huggingface.co/spaces/csuhan/Tar" target="_blank"
+                class="external-link button is-normal is-rounded button-shadow">
+                <span class="icon">
+                  <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height: 1em;"
+                    alt="HF" />
+                </span>
+                <span>Demo</span>
+              </a>
+            </span>
+
+            <span class="link-block">
+              <a href="https://huggingface.co/collections/csuhan/tar-68538273b5537d0bee712648" target="_blank"
+                class="external-link button is-normal is-rounded button-shadow">
+                <span class="icon">
+                  <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height: 1em;"
+                    alt="HF" />
+                </span>
+                <span>Model</span>
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pswp-gallery" id="gallery">
+    <div class="pswp-gallery__item">
+      <a href="static/demo/00031.png" data-pswp-width="1024" data-pswp-height="1024" target="_blank">
+        <img src="static/demo/00031.png" alt="Demo image 2" />
+      </a>
+      <div class="pswp-caption-content">
+        Fairytale vibes. This stone house with its flower-filled balcony looks like it's straight out of a storybook.
+      </div>
+    </div>
+
+    <div class="pswp-gallery__item">
+      <a href="static/demo/00099.png" data-pswp-width="1024" data-pswp-height="1024" target="_blank">
+        <img src="static/demo/00099.png" alt="Demo image 2" />
+      </a>
+      <div class="pswp-caption-content">
+        The image depicts a fantastical scene set in a lush forest with tall pine trees and a backdrop of a large,
+        glowing moon. In the foreground, three human figures are seen from behind, observing a colossal, green-haired
+        creature with large horns. The creature has a mystical aura, with its hair flowing like a river. The three human
+        figures are dressed in period clothing, suggesting an older time period. The colors are vibrant, with the green
+        of the creature contrasting beautifully against the greenery of the forest and the purple hues of the human
+        figures' hair.
+      </div>
+    </div>
+
+    <div class="pswp-gallery__item">
+      <a href="static/demo/00026.png" data-pswp-width="1024" data-pswp-height="1024" target="_blank">
+        <img src="static/demo/00026.png" alt="Demo image 2" />
+      </a>
+      <div class="pswp-caption-content">
+        16 years old redhead girl with many freckles, gray eyes, full lips
+      </div>
+    </div>
+
+    <div class="pswp-gallery__item">
+      <a href="static/demo/00013.png" data-pswp-width="1024" data-pswp-height="1024" target="_blank">
+        <img src="static/demo/00013.png" alt="Demo image 2" />
+      </a>
+      <div class="pswp-caption-content">
+        a chinese rabbit made of white ceramic with blue ink, stunning intricate designs, ((geometric and floral
+        patterns, fine art))
+      </div>
+    </div>
+
+    <div class="pswp-gallery__item">
+      <a href="static/demo/00003.png" data-pswp-width="1024" data-pswp-height="1024" target="_blank">
+        <img src="static/demo/00003.png" alt="Demo image 2" />
+      </a>
+      <div class="pswp-caption-content">
+        A serene photograph of a ginger and white cat sitting in a sunlit grassy field. The cat is positioned slightly
+        to the right, gazing upwards with a calm expression. Its fur is a soft orange with distinct white patches on its
+        chest and face. The foreground features out-of-focus blades of grass, creating a dreamy bokeh effect. The
+        background is a blurred mix of soft greens and browns, suggesting a natural outdoor setting. The lighting is
+        warm and golden, highlighting the cat's fur and casting gentle shadows. The image has a shallow depth of field,
+        emphasizing the cat while the background remains softly blurred. Photorealistic, tranquil, natural lighting,
+        warm color palette, high contrast, intimate, peaceful atmosphere.
+      </div>
+    </div>
+
+    <div class="pswp-gallery__item">
+      <a href="static/demo/00004.png" data-pswp-width="1024" data-pswp-height="1024" target="_blank">
+        <img src="static/demo/00004.png" alt="Demo image 2" />
+      </a>
+      <div class="pswp-caption-content">
+        The image depicts a surreal scene set against a backdrop of a starry night sky. On the left side, a silhouette
+        of a young boy sits at a table, holding a handful of playing cards. The boy is dressed in a red jacket and is
+        seated on a chair. On the right side, a fantastical creature emerges from the cosmos. This creature has a
+        vibrant, multi-colored, and intricate design, resembling a fusion of swirling galaxies and nebulae. It has a
+        large, glowing eye and tentacle-like appendages that seem to be reaching out towards the boy. The overall mood
+        of the image is mysterious and otherworldly.
+      </div>
+    </div>
+
+    <div class="pswp-gallery__item">
+      <a href="static/demo/00006.png" data-pswp-width="1024" data-pswp-height="1024" target="_blank">
+        <img src="static/demo/00006.png" alt="Demo image 2" />
+      </a>
+      <div class="pswp-caption-content">
+        The image depicts a picturesque winter landscape with a grand stone bridge arching over a turquoise river. On
+        either side of the river, there are snow-covered wooden houses with steep roofs, and the ground is blanketed in
+        snow. Tall, rugged cliffs rise in the background, and a castle-like structure with multiple towers stands atop
+        one of the cliffs. The sky is painted in soft hues of blue and white, suggesting a serene winter day.
+      </div>
+    </div>
+
+    <div class="pswp-gallery__item">
+      <a href="static/demo/00331.png" data-pswp-width="1024" data-pswp-height="1024" target="_blank">
+        <img src="static/demo/00331.png" alt="Demo image 2" />
+      </a>
+      <div class="pswp-caption-content">
+        The image showcases a meticulously crafted origami model of an elephant. The elephant is intricately designed
+        with folded paper pieces, creating a three-dimensional appearance. The elephant is standing on a patch of green
+        grass, which adds a touch of realism to the scene. The background is plain white, emphasizing the elephant and
+        the grass.
+      </div>
+    </div>
+
+    <div class="pswp-gallery__item">
+      <a href="static/demo/00036.png" data-pswp-width="1024" data-pswp-height="1024" target="_blank">
+        <img src="static/demo/00036.png" alt="Demo image 2" />
+      </a>
+      <div class="pswp-caption-content">
+        Fresh sweet iced tea is displayed on the table with mint flowers
+      </div>
+    </div>
+
+    <div class="pswp-gallery__item">
+      <a href="static/demo/00667.png" data-pswp-width="1024" data-pswp-height="1024" target="_blank">
+        <img src="static/demo/00667.png" alt="Demo image 2" />
+      </a>
+      <div class="pswp-caption-content">
+        The image showcases a female character with long, wavy, silver hair adorned with a crown made of blue gemstones.
+        She wears a white, flowing gown with intricate blue and silver embroidery. The gown has a high neckline and
+        sleeveless design. The character's eyes are blue, and she has a serene expression. In the background, there are
+        tall, classical columns and a hint of a blue sky with floating petals or leaves.
+      </div>
+    </div>
+  </div>
+
+  <section class="section hero">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-two-thirds">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            This paper presents a multimodal framework that attempts to unify visual understanding and generation within
+            a shared discrete semantic representation. At its core is the Text-Aligned Tokenizer (TA-Tok), which
+            converts images into discrete tokens using a text-aligned codebook projected from a large language model's
+            (LLM) vocabulary. By integrating vision and text into a unified space with an expanded vocabulary, our
+            multimodal LLM, Tar, enables cross-modal input and output through a shared interface, without the need for
+            modality-specific designs.
+            Additionally, we propose scale-adaptive encoding and decoding to balance efficiency and visual detail, along
+            with a
+            generative de-tokenizer to produce high-fidelity visual outputs. To address diverse decoding needs, we
+            utilize two complementary de-tokenizers: a fast autoregressive model and a diffusion-based model. To enhance
+            modality fusion, we investigate advanced pre-training tasks, demonstrating improvements in both visual
+            understanding and generation. Experiments across benchmarks show that Tar matches or surpasses existing
+            multimodal LLM methods, achieving faster convergence and greater training efficiency.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-two-thirds">
+        <h2 class="title is-3">Method</h2>
+        <div class="content has-text-justified">
+          <p>
+            Tar is a unified multimodal LLM for both visual understanding and generation, which consists of an
+            autoregressive LLM, a visual tokenizer TA-Tok and a visual de-tokenizer.
+            Different from previous works, Tar leverages fully discrete, text-aligned visual tokens, eliminating the
+            need of modality-specific designs like visual projectors.
+            We can train Tar using the standard next-token prediction objective.
+          </p>
+          <div class="has-text-centered">
+            <img src="static/images/MLLM.png" alt="Tar" width="95%" />
+          </div>
+          <p>
+            The key deisng of Tar is a text-aligned visual tokenizer, TA-Tok.
+            It add a vector quantization module to pretrained SigLIP2, thus converting input images into semantic,
+            discrete tokens.
+            Unlike other discrete tokenizers (e.g., VQVAE), TA-Tok directly leverage LLM's token embeddings as its
+            codebook.
+            The visual token can be represented by a transformed LLM token. Therefore, training unified MLLM with TA-Tok
+            is similar to adding foreign languages to the LLM.
+          </p>
+          <div class="has-text-centered">
+            <img src="static/images/VQ_and_DeTok.png" alt="TA-Tok" width="95%" />
+          </div>
+          <p>
+            Since the visual tokenizer TA-Tok is fully text-aligned, it cannot decode images directly like VQVAE.
+            Instead, we propose visual de-tokenizers to decode visual tokens back to images. Here are two variants: an
+            autoregressive model and a diffusion-based model.
+            The AR de-tokenizer works well with discrete visual tokens form TA-Tok, while for the diffusion-based
+            de-tokenier, we can leverage pretrained models for fast adaptation.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero">
+    <div class="columns is-centered">
+      <div class="column is-two-thirds">
+        <h2 class="title is-3 has-text-centered">Implementation</h2>
+        <p>
+          The trained Tar model is a standard LLM with expanded visual vocabulary.
+          As shown in the below code, the finetuned Qwen2 model can understand and generate TA-Tok's discrete tokens.
+          We do not need to modify the architecture of Qwen2. Instead, we only need to feed TA-Tok's discrete tokens to
+          Qwen2 or decode them with the de-tokenizer.
+        </p>
+        <br />
+        <div class="tabs is-boxed" id="codetab">
+          <ul>
+            <li class="is-active" data-tab="tab1">
+              <a>
+                <span class="icon is-small"><i class="fas fa-file-alt" aria-hidden="true"></i></span>
+                <span>Visual Understanding</span>
+              </a>
+            </li>
+            <li data-tab="tab2">
+              <a>
+                <span class="icon is-small"><i class="fas fa-image" aria-hidden="true"></i></span>
+                <span>Visual Generation</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="tab-content" id="tab1">
+          <pre><code class="language-python">
+from transformers import AutoTokenizer, Qwen2ForCausalLM
+from tok.ta_tok import TextAlignedTokenizer
+
+class ImageToTextInference:
+    def __init__(self, config: I2TConfig):
+        self.config = config
+        self.model = Qwen2ForCausalLM.from_pretrained(config.model_path)
+        self.text_tokenizer = AutoTokenizer.from_pretrained(config.model_path)
+        self.visual_tokenizer = TextAlignedTokenizer.from_checkpoint(
+            config.ta_tok_path, load_teacher=False, input_type='indices')
+
+    def generate(self, image_path: str, prompt: str) -> str:
+        image = Image.open(image_path).convert('RGB')
+        image = to_tensor(image).unsqueeze(0)
+        
+        image_code = self.visual_tokenizer(image)['encoded']
+        image_text = "".join([f"&lt;I{x}&gt;" for x in image_code[0].cpu().tolist()])
+        
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": f"{image_text}\n{prompt}"}]
+        
+        input_text = self.text_tokenizer.apply_chat_template(messages)
+        inputs = self.text_tokenizer(input_text, return_tensors="pt")
+        
+        gen_ids = self.model.generate(
+            inputs.input_ids, max_new_tokens=256, do_sample=True)
+        return self.text_tokenizer.batch_decode(gen_ids)
+          </code></pre>
+        </div>
+
+        <div class="tab-content is-hidden" id="tab2">
+          <pre><code class="language-python">
+from transformers import AutoTokenizer, Qwen2ForCausalLM
+from tok.mm_autoencoder import MMAutoEncoder
+
+class TextToImageInference:
+    def __init__(self, config: T2IConfig):
+        self.config = config
+        self.model = Qwen2ForCausalLM.from_pretrained(self.config.model_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.config.model_path)
+        self.visual_tokenizer = MMAutoEncoder(**tok_config).eval()
+
+    def generate_image(self, prompt: str) -> Image.Image:
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}]
+        
+        input_text = self.tokenizer.apply_chat_template(messages)
+        inputs = self.tokenizer(input_text, return_tensors="pt")
+        gen_ids = self.model.generate(
+            inputs.input_ids, max_new_tokens=729, do_sample=True)
+        
+        gen_text = self.tokenizer.batch_decode(gen_ids)[0]
+        gen_code = [int(x) for x in re.findall(r'<I(\d+)>', gen_text)]
+        gen_code = torch.tensor(gen_code).unsqueeze(0)
+        
+        gen_tensor = self.visual_tokenizer.decode_from_encoder_indices(gen_code)
+        return Image.fromarray(gen_tensor[0].numpy())
+          </code></pre>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <section class="section hero">
+    <div class="columns is-centered">
+      <div class="column is-two-thirds">
+        <h2 class="title is-3 has-text-centered">Experiment</h2>
+
+        <div class="content">
+          <h3 class="title is-5">
+            Results on Visual Understanding Benchmarks
+          </h3>
+          <p class="subtitle is-7">
+            * Token: Token type, including Continuous (C), Discrete (D), Semantic (S), Pixel (P) and Hybrid (H).
+          </p>
+          <div class="table-container has-text-centered">
+            <table class="table is-hoverable is-fullwidth is-size-6" id="und-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th># LLM</th>
+                  <th>Token</th>
+                  <th>POPE↑</th>
+                  <th>MME-P↑</th>
+                  <th>MME-C↑</th>
+                  <th>MMB↑</th>
+                  <th>SEED↑</th>
+                  <th>GQA↑</th>
+                  <th>MMMU↑</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Show-o</td>
+                  <td>1.3B</td>
+                  <td>D,P</td>
+                  <td>80.0</td>
+                  <td>1097</td>
+                  <td>248</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>58.0</td>
+                  <td>26.7</td>
+                </tr>
+                <tr>
+                  <td>Harmon</td>
+                  <td>1.5B</td>
+                  <td>C,H</td>
+                  <td><u>87.6</u></td>
+                  <td>1155</td>
+                  <td><u>321</u></td>
+                  <td>65.5</td>
+                  <td>67.1</td>
+                  <td>58.9</td>
+                  <td><strong>38.9</strong></td>
+                </tr>
+                <tr>
+                  <td>Janus</td>
+                  <td>1.5B</td>
+                  <td>C,S</td>
+                  <td>87.0</td>
+                  <td>1338</td>
+                  <td>222</td>
+                  <td>69.4</td>
+                  <td>63.7</td>
+                  <td>59.1</td>
+                  <td>30.5</td>
+                </tr>
+                <tr>
+                  <td>Janus-Pro</td>
+                  <td>1.5B</td>
+                  <td>C,S</td>
+                  <td>86.2</td>
+                  <td><strong>1444</strong></td>
+                  <td>268</td>
+                  <td><strong>75.5</strong></td>
+                  <td><u>68.3</u></td>
+                  <td><u>59.3</u></td>
+                  <td>36.3</td>
+                </tr>
+                <tr>
+                  <td>D-Dit</td>
+                  <td>2.0B</td>
+                  <td>C,P</td>
+                  <td>84.0</td>
+                  <td>1125</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>59.2</td>
+                  <td>-</td>
+                </tr>
+                <tr class="has-background-info-light">
+                  <td><strong>Tar (Ours)</strong></td>
+                  <td>1.5B</td>
+                  <td>D,S</td>
+                  <td><strong>88.4</strong></td>
+                  <td><u>1390</u></td>
+                  <td><strong>342</strong></td>
+                  <td>65.6</td>
+                  <td><strong>70.4</strong></td>
+                  <td><strong>61.1</strong></td>
+                  <td>36.0</td>
+                </tr>
+                <tr>
+                  <td>ILLUME</td>
+                  <td>7B</td>
+                  <td>C,S</td>
+                  <td><strong>88.5</strong></td>
+                  <td>1445</td>
+                  <td>-</td>
+                  <td>65.1</td>
+                  <td><u>72.9</u></td>
+                  <td>-</td>
+                  <td>38.2</td>
+                </tr>
+                <tr>
+                  <td>Chameleon</td>
+                  <td>7B</td>
+                  <td>D,P</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>22.4</td>
+                </tr>
+                <tr>
+                  <td>LWM</td>
+                  <td>7B</td>
+                  <td>D,P</td>
+                  <td>75.2</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>44.8</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>Liquid</td>
+                  <td>7B</td>
+                  <td>D,P</td>
+                  <td>81.1</td>
+                  <td>1119</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>58.4</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>UniTok</td>
+                  <td>7B</td>
+                  <td>D,H</td>
+                  <td>83.2</td>
+                  <td>1448</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td></td>
+                  <td>61.1</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>VILA-U</td>
+                  <td>7B</td>
+                  <td>D,H</td>
+                  <td>85.8</td>
+                  <td>1402</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>59.0</td>
+                  <td>60.8</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>Janus-Pro</td>
+                  <td>7B</td>
+                  <td>C,S</td>
+                  <td>87.4</td>
+                  <td><u>1567</u></td>
+                  <td><u>260</u></td>
+                  <td><strong>79.2</strong></td>
+                  <td>72.1</td>
+                  <td><strong>62.0</strong></td>
+                  <td>41.0</td>
+                </tr>
+                <tr>
+                  <td>MetaMorph</td>
+                  <td>8B</td>
+                  <td>C,S</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>75.2</td>
+                  <td>71.8</td>
+                  <td>-</td>
+                  <td><strong>41.8</strong></td>
+                </tr>
+                <tr class="has-background-info-light">
+                  <td><strong>Tar (Ours)</strong></td>
+                  <td>7B</td>
+                  <td>D,S</td>
+                  <td><u>87.8</u></td>
+                  <td><strong>1571</strong></td>
+                  <td><strong>355</strong></td>
+                  <td>74.4</td>
+                  <td><strong>73.0</strong></td>
+                  <td><u>61.3</u></td>
+                  <td>39.0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="content">
+          <h3 class="title is-5">
+            Results on Visual Generation Benchmarks
+          </h3>
+          <div class="table-container has-text-centered">
+            <table class="table is-fullwidth is-hoverable has-text-centered is-size-6" id="gen-table">
+              <thead>
+                <tr>
+                  <th rowspan="2">Method</th>
+                  <th colspan="4">GenEval</th>
+                  <th colspan="4">DPG Bench</th>
+                </tr>
+                <tr>
+                  <th>Two Obj.</th>
+                  <th>Counting</th>
+                  <th>Color Attri.</th>
+                  <th>Overall↑</th>
+                  <th>Entity</th>
+                  <th>Attribute</th>
+                  <th>Relation</th>
+                  <th>Overall↑</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LWM-7B</td>
+                  <td>0.41</td>
+                  <td>0.46</td>
+                  <td>0.15</td>
+                  <td>0.47</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>SEED-X-13B</td>
+                  <td>0.58</td>
+                  <td>0.26</td>
+                  <td>0.14</td>
+                  <td>0.49</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>Show-o-1.3B</td>
+                  <td>0.52</td>
+                  <td>0.49</td>
+                  <td>0.28</td>
+                  <td>0.53</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>Transfusion-7B</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>0.63</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>D-DiT-2B</td>
+                  <td>0.80</td>
+                  <td>0.54</td>
+                  <td>0.50</td>
+                  <td>0.65</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>ILLUME-7B</td>
+                  <td>0.86</td>
+                  <td>0.45</td>
+                  <td>0.28</td>
+                  <td>0.61</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>Janus-1.3B</td>
+                  <td>0.68</td>
+                  <td>0.30</td>
+                  <td>0.42</td>
+                  <td>0.61</td>
+                  <td>87.38</td>
+                  <td>87.70</td>
+                  <td>85.46</td>
+                  <td>79.68</td>
+                </tr>
+                <tr>
+                  <td>Janus-Pro-1B</td>
+                  <td>0.82</td>
+                  <td>0.51</td>
+                  <td>0.56</td>
+                  <td>0.73</td>
+                  <td>88.63</td>
+                  <td>88.17</td>
+                  <td>88.98</td>
+                  <td>82.63</td>
+                </tr>
+                <tr>
+                  <td>Harmon-1.5B</td>
+                  <td>0.86</td>
+                  <td>0.57</td>
+                  <td>0.48</td>
+                  <td>0.76</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>Janus-Pro-7B</td>
+                  <td>0.89</td>
+                  <td>0.59</td>
+                  <td>0.66</td>
+                  <td>0.80</td>
+                  <td>88.90</td>
+                  <td>89.40</td>
+                  <td>89.32</td>
+                  <td>84.19</td>
+                </tr>
+                <tr class="has-background-info-light">
+                  <td><strong>Tar-1.5B</strong></td>
+                  <td>0.91</td>
+                  <td>0.76</td>
+                  <td>0.51</td>
+                  <td>0.76</td>
+                  <td>89.35</td>
+                  <td>86.91</td>
+                  <td>93.50</td>
+                  <td>82.96</td>
+                </tr>
+                <tr class="has-background-info-light">
+                  <td><strong>Tar-1.5B + Self Reflect</strong></td>
+                  <td>0.92</td>
+                  <td>0.77</td>
+                  <td>0.55</td>
+                  <td>0.78</td>
+                  <td>88.48</td>
+                  <td>87.83</td>
+                  <td>93.38</td>
+                  <td>84.10</td>
+                </tr>
+                <tr class="has-background-info-light">
+                  <td><strong>Tar-7B</strong></td>
+                  <td>0.92</td>
+                  <td>0.83</td>
+                  <td>0.65</td>
+                  <td><u>0.84</u></td>
+                  <td>88.62</td>
+                  <td>88.05</td>
+                  <td>93.98</td>
+                  <td>84.19</td>
+                </tr>
+                <tr class="has-background-info-light">
+                  <td><strong>Tar-7B + Self Reflect</em></strong></td>
+                  <td>0.93</td>
+                  <td>0.86</td>
+                  <td>0.70</td>
+                  <td><strong>0.85</strong></td>
+                  <td>88.60</td>
+                  <td>88.78</td>
+                  <td>93.59</td>
+                  <td><u>84.65</u></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Demo</h2>
+        <div class="content has-text-justified">
+          <iframe src="https://csuhan-Tar.hf.space" width="100%" height="600" frameborder="0" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="section hero">
+    <div class="columns is-centered">
+      <div class="column is-two-thirds">
+        <h2 class="title is-3">BibTeX</h2>
+        If you find our work useful, please cite our paper. BibTex code is provided below:
+        <pre><code class="nohighlight">@article{han2025tar,
+  title={Vision as a Dialect: Unifying Visual Understanding and Generation via Text-Aligned Representations}, 
+  author={Han, Jiaming and Chen, Hao and Zhao, Yang and Wang, Hanyu and Zhao, Qi and Yang, Ziyan and He, Hao and Yue, Xiangyu and Jiang, Lu},
+  year={2025},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV}
+}
+</code></pre>
+      </div>
+    </div>
+  </section>
+
+
+  <footer class="footer">
+    <div class="columns is-centered">
+      <div class="column is-two-thirds">
+        <div class="content">
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template"
+              target="_blank">Academic Project Page Template</a> under a <a rel="license"
+              href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0 License.</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+</body>
+
+<script type="module">
+  import PhotoSwipeLightbox from './static/js/photoswipe-lightbox.esm.js';
+  import PhotoSwipeDynamicCaption from './static/js/photoswipe-dynamic-caption-plugin.esm.min.js';
+
+  const smallScreenPadding = {
+    top: 0, bottom: 0, left: 0, right: 0
+  };
+  const largeScreenPadding = {
+    top: 30, bottom: 30, left: 0, right: 0
+  };
+  const lightbox = new PhotoSwipeLightbox({
+    gallerySelector: '#gallery',
+    childSelector: '.pswp-gallery__item',
+
+    // optionaly adjust viewport
+    paddingFn: (viewportSize) => {
+      return viewportSize.x < 700 ? smallScreenPadding : largeScreenPadding
+    },
+    pswpModule: () => import('./static/js/photoswipe.esm.js')
+  });
+
+  const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
+    mobileLayoutBreakpoint: 700,
+    type: 'auto',
+    mobileCaptionOverlapRatio: 1
+  });
+
+  lightbox.init();
+</script>
+
+<script>
+  const tabs = document.querySelectorAll("#codetab ul li");
+  const contents = document.querySelectorAll(".tab-content");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("is-active"));
+      tab.classList.add("is-active");
+
+      const target = tab.dataset.tab;
+      contents.forEach(c => {
+        c.classList.toggle("is-hidden", c.id !== target);
+      });
+    });
+  });
+</script>
+
+</html>

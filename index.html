@@ -362,7 +362,7 @@
         <h2 class="title is-3">Method</h2>
         <div class="content has-text-justified">
           <p>
-            Tar is a unified multimodal LLM for both visual understanding and generation, which consists of an
+            <strong>Framework.</strong> Tar is a unified multimodal LLM for both visual understanding and generation, which consists of an
             autoregressive LLM, a visual tokenizer TA-Tok and a visual de-tokenizer.
             Different from previous works, Tar leverages fully discrete, text-aligned visual tokens, eliminating the
             need of modality-specific designs like visual projectors.
@@ -372,7 +372,7 @@
             <img src="static/images/MLLM.png" alt="Tar" width="95%" />
           </div>
           <p>
-            The key deisng of Tar is a text-aligned visual tokenizer, TA-Tok.
+            <strong>Visual Tokenizer.</strong> The key deisng of Tar is a text-aligned visual tokenizer, TA-Tok.
             It add a vector quantization module to pretrained SigLIP2, thus converting input images into semantic,
             discrete tokens.
             Unlike other discrete tokenizers (e.g., VQVAE), TA-Tok directly leverage LLM's token embeddings as its
@@ -384,7 +384,7 @@
             <img src="static/images/VQ_and_DeTok.png" alt="TA-Tok" width="95%" />
           </div>
           <p>
-            Since the visual tokenizer TA-Tok is fully text-aligned, it cannot decode images directly like VQVAE.
+            <strong>De-Tokenizer.</strong> Since the visual tokenizer TA-Tok is fully text-aligned, it cannot decode images directly like VQVAE.
             Instead, we propose visual de-tokenizers to decode visual tokens back to images. Here are two variants: an
             autoregressive model and a diffusion-based model.
             The AR de-tokenizer works well with discrete visual tokens form TA-Tok, while for the diffusion-based

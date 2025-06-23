@@ -479,7 +479,7 @@ class TextToImageInference:
             inputs.input_ids, max_new_tokens=729, do_sample=True)
         
         gen_text = self.tokenizer.batch_decode(gen_ids)[0]
-        gen_code = [int(x) for x in re.findall(r'<I(\d+)>', gen_text)]
+        gen_code = [int(x) for x in re.findall(r'&lt;I(\d+)&gt;', gen_text)]
         gen_code = torch.tensor(gen_code).unsqueeze(0)
         
         gen_tensor = self.visual_tokenizer.decode_from_encoder_indices(gen_code)

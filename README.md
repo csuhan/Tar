@@ -9,7 +9,7 @@
       alt="Project Page"
     />
   </a>
-<a href="https://arxiv.org/abs/xxxx.xxxxx">
+<a href="http://arxiv.org/abs/2506.18898">
     <img
       src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv&logoColor=red"
       alt="Tar Paper on arXiv"

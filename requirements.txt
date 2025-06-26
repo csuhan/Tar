@@ -1,0 +1,17 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
+accelerate==0.28.0
+datasets==2.16.1
+deepspeed==0.14.4
+einops==0.8.1
+gradio==5.34.0
+huggingface_hub==0.29.1
+numpy==1.26.1
+Pillow==11.2.1
+pyarrow==17.0.0
+PyYAML==6.0.2
+torch==2.1.2
+torchvision==0.16.2
+tqdm==4.66.5
+transformers==4.50.0
+wandb
+easydict

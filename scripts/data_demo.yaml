@@ -1,0 +1,20 @@
+datasets:
+  - json_path:
+    # https://huggingface.co/datasets/lmms-lab/LLaVA-ReCap-118K
+    # https://huggingface.co/datasets/lmms-lab/LLaVA-ReCap-558K
+    # https://huggingface.co/datasets/csuhan/LLaVA-SFT-665K
+    - /tmp/LLaVA-ReCap-118K/data
+    - /tmp/LLaVA-ReCap-558K/data
+    - /tmp/LLaVA-SFT-665K
+    ratio: 2
+    name: 'parquet'
+  - json_path:
+    # https://huggingface.co/datasets/csuhan/ImageNet1K-T2I-QwenVL-FLUX
+    - /tmp/ImageNet1K-T2I-QwenVL-FLUX
+    ratio: 4
+    name: 'parquet'
+  - json_path:
+    # https://huggingface.co/datasets/Magpie-Align/Magpie-Qwen2.5-Pro-1M-v0.1
+    - /tmp/Magpie-Qwen2.5-Pro-1M-v0.1/data
+    ratio: 1
+    name: 'parquet'

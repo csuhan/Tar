@@ -21,9 +21,16 @@
         alt="Huggingface Model"
     />
   </a>
+  <a href="https://huggingface.co/spaces/csuhan/Tar-7B">
+    <img 
+        src="https://img.shields.io/badge/HF-Space1-yellow?logo=huggingface&logoColor=yellow" 
+        alt="Huggingface Space"
+    />
+  </a>
+
   <a href="https://huggingface.co/spaces/csuhan/Tar">
     <img 
-        src="https://img.shields.io/badge/HF-Space-yellow?logo=huggingface&logoColor=yellow" 
+        src="https://img.shields.io/badge/HF-Space2-yellow?logo=huggingface&logoColor=yellow" 
         alt="Huggingface Space"
     />
   </a>

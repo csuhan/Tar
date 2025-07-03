@@ -15,13 +15,13 @@
       alt="Tar Paper on arXiv"
     />
   </a>
-  <a href="https://huggingface.co/collections/csuhan/tar-68538273b5537d0bee712648">
+  <a href="https://huggingface.co/collections/ByteDance-Seed/tar-6864cf0d9fe59a3b91cc4260">
     <img 
         src="https://img.shields.io/badge/HF-Model-yellow?logo=huggingface&logoColor=yellow" 
         alt="Huggingface Model"
     />
   </a>
-  <a href="https://huggingface.co/spaces/csuhan/Tar-7B">
+  <a href="https://huggingface.co/spaces/ByteDance-Seed/Tar-7B">
     <img 
         src="https://img.shields.io/badge/HF-Space1-yellow?logo=huggingface&logoColor=yellow" 
         alt="Huggingface Space"

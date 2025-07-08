@@ -383,10 +383,10 @@
             <img src="static/images/MLLM.png" alt="Tar" width="95%" />
           </div>
           <p>
-            <strong>Visual Tokenizer.</strong> The key deisng of Tar is a text-aligned visual tokenizer, TA-Tok.
-            It add a vector quantization module to pretrained SigLIP2, thus converting input images into semantic,
+            <strong>Visual Tokenizer.</strong> The key design of Tar is a text-aligned visual tokenizer, TA-Tok.
+            It adds a vector quantization module to pretrained SigLIP2, thus converting input images into semantic,
             discrete tokens.
-            Unlike other discrete tokenizers (e.g., VQVAE), TA-Tok directly leverage LLM's token embeddings as its
+            Unlike other discrete tokenizers (e.g., VQVAE), TA-Tok directly leverages LLM's token embeddings as its
             codebook.
             The visual token can be represented by a transformed LLM token. Therefore, training unified MLLM with TA-Tok
             is similar to adding foreign languages to the LLM.
@@ -398,7 +398,7 @@
             <strong>De-Tokenizer.</strong> Since the visual tokenizer TA-Tok is fully text-aligned, it cannot decode images directly like VQVAE.
             Instead, we propose visual de-tokenizers to decode visual tokens back to images. Here are two variants: an
             autoregressive model and a diffusion-based model.
-            The AR de-tokenizer works well with discrete visual tokens form TA-Tok, while for the diffusion-based
+            The AR de-tokenizer works well with discrete visual tokens from TA-Tok, while for the diffusion-based
             de-tokenier, we can leverage pretrained models for fast adaptation.
           </p>
         </div>

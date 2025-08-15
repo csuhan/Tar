@@ -39,6 +39,7 @@
 
 
 ### News
+- Aug 2025. Release Dif-DTok. Check [t2i_inference_sana.py](t2i_inference_sana.py) for usage.
 - June 2025. Code and models are released.
 
 ### Contents
@@ -78,6 +79,11 @@ pip install flash-attn --no-build-isolation
 | AR-DTok |  AR  | [vq_ds_t2i.pt](https://huggingface.co/peizesun/llamagen_t2i/resolve/main/vq_ds16_t2i.pt) |    512px    |  [ar_dtok_lp_512px.pth](https://huggingface.co/csuhan/TA-Tok/resolve/main/ar_dtok_lp_512px.pth)    |
 | AR-DTok |  AR  | [vq_ds_t2i.pt](https://huggingface.co/peizesun/llamagen_t2i/resolve/main/vq_ds16_t2i.pt) |    1024px    |  [ar_dtok_lp_1024px.pth](https://huggingface.co/csuhan/TA-Tok/resolve/main/ar_dtok_lp_1024px.pth)    |
 
+|  Model  | Type | Pretrain        | Output Size | Link |
+|:-------:|:----:|--------------|:-----------:|:----:|
+| Dif-DTok| Diffusion | SANA-600M  | 512px       | [Tar-SANA-600M-512px](https://huggingface.co/csuhan/Tar-SANA-600M-512px) |
+| Dif-DTok| Diffusion | SANA-600M  | 1024px       | [Tar-SANA-600M-1024px](https://huggingface.co/csuhan/Tar-SANA-600M-1024px) |
+
 3️⃣ LLM
 
 |   Model  | Vision Tokenizer |      LLM     | Link |
@@ -88,7 +94,7 @@ pip install flash-attn --no-build-isolation
 
 ### Inference
 
-1️⃣ Text-to-image generation
+1️⃣ Text-to-image generation with AR-DTok
 
 ```python
 from t2i_inference import T2IConfig, TextToImageInference
@@ -104,7 +110,20 @@ image.save("generated_image.png")
 ```
 You can directly run ```python t2i_inference.py``` to generate images. The models will be downloaded automatically.
 
-2️⃣ Image Understanding
+2️⃣ Text-to-image generation with Dif-DTok
+```python
+from t2i_inference_sana import T2IConfig, TextToImageInference
+config = T2IConfig()
+config.sana_path = snapshot_download("csuhan/Tar-SANA-600M-1024px")
+config.ta_tok_path = hf_hub_download("csuhan/TA-Tok", "ta_tok.pth")
+inference = TextToImageInference(config)
+
+prompt = "A photo of a macaw"
+image = inference.generate_image(prompt)
+image.save("generated_image.png")
+```
+
+3️⃣ Image Understanding
 ```python
 from i2t_inference import I2TConfig, ImageToTextInference
 config = I2TConfig(ta_tok_path=hf_hub_download("csuhan/TA-Tok", "ta_tok.pth"))
